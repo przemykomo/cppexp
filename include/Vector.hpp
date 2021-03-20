@@ -53,6 +53,25 @@ class Vector {
         m_size--;
     }
 
+    void pushFront(const T& value) {
+        m_size++;
+        m_capacity = m_size;
+        T* tmpPtr = new T[m_size];
+        tmpPtr[0] = value;
+        std::memcpy(tmpPtr + 1, dataPtr, sizeof(T) * (m_size - 1));
+        delete [] dataPtr;
+        dataPtr = tmpPtr;
+    }
+
+    void popFront() {
+        m_size--;
+        m_capacity = m_size;
+        T* tmpPtr = new T[m_size];
+        std::memcpy(tmpPtr, dataPtr + 1, sizeof(T) * (m_size - 1));
+        delete [] dataPtr;
+        dataPtr = tmpPtr;
+    }
+
     inline T& operator[](int index) {
         return dataPtr[index];
     }
