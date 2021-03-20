@@ -7,7 +7,7 @@ class Vector {
     public:
     Vector() : Vector(0) {}
 
-    Vector(int initialSize) : m_size(initialSize) {
+    Vector(int initialSize) : m_size(initialSize), m_capacity(initialSize) {
         dataPtr = new T[m_size];
     }
 
@@ -23,23 +23,34 @@ class Vector {
         return m_size;
     }
 
-    //int capacity();
-    //void shrinkToFit();
+    inline int capacity() {
+        return m_capacity;
+    }
+
+    void shrinkToFit() {
+        if (m_size < m_capacity) {
+            m_capacity = m_size;
+            T* tmpPtr = new T[m_size];
+            std::memcpy(tmpPtr, dataPtr, sizeof(T) * m_size);
+            delete [] dataPtr;
+            dataPtr = tmpPtr;
+        }
+    }
+    
     void pushBack(const T& value) {
         m_size++;
-        T* tmpPtr = new T[m_size];
-        std::memcpy(tmpPtr, dataPtr, sizeof(T) * (m_size - 1));
-        delete [] dataPtr;
-        dataPtr = tmpPtr;
+        if (m_size > m_capacity) {
+            m_capacity = m_size;
+            T* tmpPtr = new T[m_size];
+            std::memcpy(tmpPtr, dataPtr, sizeof(T) * (m_size - 1));
+            delete [] dataPtr;
+            dataPtr = tmpPtr;
+        }
         dataPtr[m_size - 1] = value;
     }
 
     void popBack() {
         m_size--;
-        T* tmpPtr = new T[m_size];
-        std::memcpy(tmpPtr, dataPtr, sizeof(T) * m_size);
-        delete [] dataPtr;
-        dataPtr = tmpPtr;
     }
 
     inline T& operator[](int index) {
@@ -48,6 +59,6 @@ class Vector {
 
     private:
     int m_size;
-    //int m_capacity;
+    int m_capacity;
     T* dataPtr;
 };
